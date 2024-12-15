@@ -70,7 +70,7 @@ export async function sync({ project, host, secret, path: projectPath, all }: Sy
 
 async function uploadFile(filePath: string, { project, host, secret, projectPath }: FileOperationOptions): Promise<void> {
   const relativePath = projectPath ? path.relative(projectPath, filePath) : filePath;
-  const url = `${host}/sync/file/${project}/${relativePath}`;
+  const url = `${host}/api/sync/file/${project}/${relativePath}`;
   const fileHandle = await fs.open(filePath, 'r');
   const readStream = fileHandle.createReadStream();
   
@@ -89,7 +89,7 @@ async function uploadFile(filePath: string, { project, host, secret, projectPath
 }
 
 async function deleteFile(relativePath: string, { project, host, secret }: FileOperationOptions): Promise<void> {
-  const url = `${host}/sync/file/${project}/${relativePath}`;
+  const url = `${host}/api/sync/file/${project}/${relativePath}`;
   await fetchWithAuth(url, secret, {
     method: 'DELETE'
   });

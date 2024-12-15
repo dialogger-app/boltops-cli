@@ -1,4 +1,5 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 import { serve } from '@hono/node-server';
 import fs from 'fs/promises';
 import path from 'path';
@@ -21,8 +22,17 @@ export async function host({ port, workspace, secret }: HostOptions): Promise<vo
   const app = new Hono();
   const projectConfigs = new Map<string, ProjectConfig>();
 
+  app.use('*', cors())
+
+  app.get('/status', async (c) => {
+    return c.json({
+      status: 'healthy',
+      version: '0.0.4'
+    });
+  });
+
   // Middleware to check authentication
-  app.use(async (c, next) => {
+  app.use('/api/*', async (c, next) => {
     const auth = c.req.header('Authorization');
     if (!auth || auth !== `Bearer ${secret}`) {
       return c.json({ error: 'Unauthorized' }, 401);
@@ -30,15 +40,8 @@ export async function host({ port, workspace, secret }: HostOptions): Promise<vo
     await next();
   });
 
-  app.get('/status', async (c) => {
-    return c.json({
-      status: 'healthy',
-      version: '1.0.0'
-    });
-  });
-
   // Get list of files for a project
-  app.get('/sync/list/:project', async (c) => {
+  app.get('/api/sync/list/:project', async (c) => {
     const { project } = c.req.param();
     const projectPath = path.join(workspace, 'projects', project);
 
@@ -63,9 +66,9 @@ export async function host({ port, workspace, secret }: HostOptions): Promise<vo
   });
 
   // Get file content
-  app.get('/sync/file/:project/*', async (c) => {
+  app.get('/api/sync/file/:project/*', async (c) => {
     const { project } = c.req.param();
-    const filePath = c.req.path.replace(`/sync/file/${project}/`, '');
+    const filePath = c.req.path.replace(`/api/sync/file/${project}/`, '');
     const fullPath = path.join(workspace, 'projects', project, filePath);
 
     try {
@@ -88,9 +91,9 @@ export async function host({ port, workspace, secret }: HostOptions): Promise<vo
   });
 
   // Upload file content
-  app.put('/sync/file/:project/*', async (c) => {
+  app.put('/api/sync/file/:project/*', async (c) => {
     const { project } = c.req.param();
-    const filePath = c.req.path.replace(`/sync/file/${project}/`, '');
+    const filePath = c.req.path.replace(`/api/sync/file/${project}/`, '');
     const projectPath = path.join(workspace, 'projects', project);
     const fullPath = path.join(projectPath, filePath);
 
@@ -116,9 +119,9 @@ export async function host({ port, workspace, secret }: HostOptions): Promise<vo
   });
 
   // Delete file
-  app.delete('/sync/file/:project/*', async (c) => {
+  app.delete('/api/sync/file/:project/*', async (c) => {
     const { project } = c.req.param();
-    const filePath = c.req.path.replace(`/sync/file/${project}/`, '');
+    const filePath = c.req.path.replace(`/api/sync/file/${project}/`, '');
     const fullPath = path.join(workspace, 'projects', project, filePath);
 
     try {
