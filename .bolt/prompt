@@ -1,0 +1,7 @@
+When you see comments in the codebase tagged with `// BOLTODO: ...` or `/* BOLTODO: ... */`,
+please implement the change described in the comment and change the `BOLTODO:` label to `BOLTODONE:`,
+so that I know I can check for changes made.
+
+Also, in your response, please include a list of the BOLTODONE items you just completed (if any)
+alongside paths to relevant files, as well as a list of outstanding BOLTODO items (if any) 
+alongside paths to relevant files please.

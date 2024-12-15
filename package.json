@@ -1,0 +1,54 @@
+{
+  "name": "boltops",
+  "version": "0.0.1",
+  "description": "A toolkit for working with bolt.new and bolt.diy",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dialogger-app/boltops-cli.git"
+  },
+  "homepage": "https://github.com/dialogger-app/boltops-cli",
+  "bugs": {
+    "url": "https://github.com/dialogger-app/boltops-cli/issues"
+  },
+  "author": "Justin C. Moore (https://github.com/jcmoore)",
+  "type": "module",
+  "bin": {
+    "boltops": "./dist/bin/boltops.js"
+  },
+  "scripts": {
+    "test:copy": "node dist/bin/boltops.js copy --project=boltops-cli .projects/boltops-cli/",
+    "test:sync": "node dist/bin/boltops.js sync --project=boltops-cli .projects/boltops-cli/",
+    "test:host": "npm start",
+    "start": "node dist/bin/boltops.js host ./.workspace",
+    "dev": "tsc --watch",
+    "build": "tsc",
+    "clean": "node -e 'require(`fs/promises`).rm(`dist`, { recursive: true })'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "hono": "^4.0.0",
+    "@hono/node-server": "^1.3.4",
+    "chokidar": "^3.5.3",
+    "micromatch": "^4.0.5",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "dotenv": "^16.3.1",
+    "p-limit": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.5",
+    "@types/micromatch": "^4.0.5",
+    "typescript": "^5.3.3"
+  },
+  "files": [
+    "dist/*.js",
+    "dist/*.d.ts"
+  ],
+  "keywords": [
+    "bolt.new",
+    "bolt.diy",
+    "Bolt",
+    "BoltOps"
+  ]
+}
