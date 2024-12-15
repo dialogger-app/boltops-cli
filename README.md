@@ -93,6 +93,8 @@ node_modules/
 .DS_Store
 ```
 
+Note that `.git` directories are always ignored.
+
 ## Security
 
 - All commands require a `BOLTOPS_SECRET` for authentication
