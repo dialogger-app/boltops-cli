@@ -93,7 +93,7 @@ node_modules/
 .DS_Store
 ```
 
-Note that `.git` directories are always ignored.
+Note that `.git` and `node_modules` directories are always ignored.
 
 ## Security
 

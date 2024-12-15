@@ -48,17 +48,18 @@ export async function host({ port, workspace, secret }: HostOptions): Promise<vo
     try {
       await fs.access(projectPath);
     } catch {
+      console.log(chalk.red(`Project not found: ${path.resolve(projectPath)}`));
       return c.json({ error: 'Project not found' }, 404);
     }
-    
+
     try {
       const files = await getAllProjectFiles(projectPath);
       const config = projectConfigs.get(project);
-      
+
       if (config?.ignorePatterns) {
         return c.json(files.filter(file => !isIgnored(file, config.ignorePatterns!)));
       }
-      
+
       return c.json({ files });
     } catch (error) {
       return c.json({ error: (error as Error).message }, 500);
@@ -195,4 +196,5 @@ function isIgnored(filePath: string, patterns: string[]): boolean {
 
 const ALWAYS_IGNORED: string[] = [
   '.git',
+  'node_modules',
 ];
