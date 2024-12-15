@@ -1,6 +1,6 @@
 {
   "name": "boltops",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A toolkit for working with bolt.new and bolt.diy",
   "license": "MIT",
   "repository": {
@@ -42,8 +42,8 @@
     "typescript": "^5.3.3"
   },
   "files": [
-    "dist/*.js",
-    "dist/*.d.ts"
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
   ],
   "keywords": [
     "bolt.new",
