@@ -16,6 +16,7 @@ interface CopyConfig {
   host: string;
   secret: string;
   clean: boolean;
+  subset?: string;
   path: string;
 }
 
@@ -24,6 +25,7 @@ interface SyncConfig {
   host: string;
   secret: string;
   all: boolean;
+  subset?: string;
   path: string;
 }
 
@@ -57,15 +59,17 @@ program
     `)
   .option('--project <project>', 'Project ID (or use BOLTOPS_PROJECT env var)')
   .option('--host <host>', 'Host URL (or use BOLTOPS_HOST env var)')
+  .option('--subset <directory>', 'Limit operations to files within specified subdirectory')
   .option('--clean', 'Clean up files not present in remote')
   .option('--sync', 'Sync files back when changed after copy')
   .argument('<path>', 'Path to project directory')
-  .action(async (path: string, options: { project?: string; host?: string; clean?: boolean; sync?: boolean }) => {
+  .action(async (path: string, options: { project?: string; host?: string; clean?: boolean; sync?: boolean; subset?: string }) => {
     const config: CopyConfig = {
       project: options.project || process.env.BOLTOPS_PROJECT || '',
       host: options.host || process.env.BOLTOPS_HOST || "http://boltops.localhost:8017",
       secret: process.env.BOLTOPS_SECRET || '',
       clean: options.clean || false,
+      subset: options.subset,
       path
     };
 
@@ -119,14 +123,16 @@ program
     `)
   .option('--project <project>', 'Project ID (or use BOLTOPS_PROJECT env var)')
   .option('--host <host>', 'Host URL (or use BOLTOPS_HOST env var)')
+  .option('--subset <directory>', 'Limit operations to files within specified subdirectory')
   .option('--all', 'Sync all files initially')
   .argument('<path>', 'Path to project directory')
-  .action(async (path: string, options: { project?: string; host?: string; all?: boolean }) => {
+  .action(async (path: string, options: { project?: string; host?: string; all?: boolean; subset?: string }) => {
     const config: SyncConfig = {
       project: options.project || process.env.BOLTOPS_PROJECT || '',
       host: options.host || process.env.BOLTOPS_HOST || "http://boltops.localhost:8017",
       secret: process.env.BOLTOPS_SECRET || '',
       all: options.all || false,
+      subset: options.subset,
       path
     };
 

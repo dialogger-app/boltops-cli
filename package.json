@@ -1,7 +1,7 @@
 {
   "name": "boltops",
-  "version": "0.0.5",
-  "description": "A toolkit for working with bolt.new and bolt.diy",
+  "version": "0.0.8",
+  "description": "A toolkit for working with bolt.new and bolt.diy (Alpha Release)",
   "license": "MIT",
   "repository": {
     "type": "git",

@@ -11,22 +11,29 @@ interface CopyOptions {
   secret: string;
   path: string;
   clean?: boolean;
+  subset?: string;
 }
 
 interface FileListResponse {
   files: string[];
 }
 
-export async function copy({ project, host, secret, path: projectPath, clean }: CopyOptions): Promise<void> {
+export async function copy({ project, host, secret, path: projectPath, clean, subset }: CopyOptions): Promise<void> {
   await ensureDir(projectPath);
 
   // Fetch list of files to copy
   const listUrl = `${host}/api/sync/list/${project}`;
   const { files } = await fetchWithAuth(listUrl, secret).then(res => res.json()) as FileListResponse;
 
+  // Filter files by subset if specified
+  const prefix = subset && path.normalize(subset);
+  const filteredFiles = prefix
+    ? files.filter(file => file.startsWith(prefix))
+    : files;
+
   // Set up concurrent downloads with a limit
   const limit = pLimit(5);
-  const downloads = files.map(filePath => {
+  const downloads = filteredFiles.map(filePath => {
     return limit(async () => {
       const fileUrl = `${host}/api/sync/file/${project}/${filePath}`;
       const response = await fetchWithAuth(fileUrl, secret);
@@ -51,6 +58,6 @@ export async function copy({ project, host, secret, path: projectPath, clean }: 
   await Promise.all(downloads);
 
   if (clean) {
-    await cleanDirectory(projectPath, files);
+    await cleanDirectory(projectPath, filteredFiles, subset);
   }
 }

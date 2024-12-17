@@ -13,7 +13,7 @@ export async function ensureDir(dir: string): Promise<void> {
 
 export async function getAllFiles(dir: string): Promise<string[]> {
   const files: string[] = [];
-  
+
   async function scan(directory: string): Promise<void> {
     const entries = await fs.readdir(directory, { withFileTypes: true });
     
@@ -33,8 +33,14 @@ export async function getAllFiles(dir: string): Promise<string[]> {
   return files;
 }
 
-export async function cleanDirectory(dir: string, keepFiles: string[]): Promise<void> {
-  const currentFiles = await getAllFiles(dir);
+export async function cleanDirectory(dir: string, keepFiles: string[], subset?: string): Promise<void> {
+  let currentFiles = await getAllFiles(dir);
+  
+  // If subset is specified, only consider files within that directory
+  if (subset) {
+    const prefix = path.normalize(subset);
+    currentFiles = currentFiles.filter(file => path.normalize(file).startsWith(prefix));
+  }
   
   for (const file of currentFiles) {
     if (!keepFiles.includes(file)) {

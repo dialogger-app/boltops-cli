@@ -1,8 +1,10 @@
 import chokidar from 'chokidar';
+import micromatch from 'micromatch';
 import path from 'path';
 import fs from 'fs/promises';
 import { fetchWithAuth } from '../utils/fetch.js';
 import { getAllFiles } from '../utils/fs.js';
+import { ALWAYS_IGNORED } from '../globals.js';
 import chalk from 'chalk';
 
 interface SyncOptions {
@@ -10,6 +12,7 @@ interface SyncOptions {
   host: string;
   secret: string;
   path: string;
+  subset?: string;
   all?: boolean;
 }
 
@@ -22,11 +25,16 @@ interface FileOperationOptions {
 
 type FileEvent = 'add' | 'change' | 'unlink' | 'unlinkDir';
 
-export async function sync({ project, host, secret, path: projectPath, all }: SyncOptions): Promise<void> {
+export async function sync({ project, host, secret, path: projectPath, all, subset }: SyncOptions): Promise<void> {
+  const prefix = subset && path.normalize(subset);
+
   if (all) {
     const files = await getAllFiles(projectPath);
     for (const file of files) {
       const filePath = path.join(projectPath, file);
+      if (ALWAYS_IGNORED.some(pattern => micromatch.isMatch(filePath, pattern))) continue;
+      if (prefix && !path.normalize(file).startsWith(prefix)) continue;
+
       await uploadFile(filePath, { project, host, secret, projectPath });
       console.log(chalk.green(`Pushed ${file}`));
     }
@@ -48,6 +56,8 @@ export async function sync({ project, host, secret, path: projectPath, all }: Sy
 
   async function handleFileChange(event: FileEvent, filePath: string): Promise<void> {
     const relativePath = path.relative(projectPath, filePath);
+    if (ALWAYS_IGNORED.some(pattern => micromatch.isMatch(relativePath, pattern))) return;
+    if (prefix && !path.normalize(relativePath).startsWith(prefix)) return;
 
     try {
       if (event === 'unlink' || event === 'unlinkDir') {

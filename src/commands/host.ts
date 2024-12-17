@@ -6,6 +6,7 @@ import path from 'path';
 import chokidar from 'chokidar';
 import micromatch from 'micromatch';
 import { ensureDir } from '../utils/fs.js';
+import { ALWAYS_IGNORED } from '../globals.js';
 import chalk from 'chalk';
 
 interface HostOptions {
@@ -193,8 +194,3 @@ async function getAllProjectFiles(dir: string): Promise<string[]> {
 function isIgnored(filePath: string, patterns: string[]): boolean {
   return patterns.some(pattern => micromatch.isMatch(filePath, pattern));
 }
-
-const ALWAYS_IGNORED: string[] = [
-  '.git',
-  'node_modules',
-];

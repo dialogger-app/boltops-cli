@@ -1,4 +1,4 @@
-# BoltOps CLI
+# BoltOps CLI (Currently in Alpha Development!)
 
 A toolkit for working with bolt.new and bolt.diy -- currently implements file synchronization.
 
